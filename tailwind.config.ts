@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ["var(--font-display)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -47,6 +51,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        soul: {
+          kindness: "hsl(var(--soul-kindness))",
+          aggression: "hsl(var(--soul-aggression))",
+          intelligence: "hsl(var(--soul-intelligence))",
+          loyalty: "hsl(var(--soul-loyalty))",
+          celestial: "hsl(var(--soul-celestial))",
+          feral: "hsl(var(--soul-feral))",
+          ethereal: "hsl(var(--soul-ethereal))",
+          guardian: "hsl(var(--soul-guardian))",
+          harmonious: "hsl(var(--soul-harmonious))",
+          glow: "hsl(var(--soul-glow))",
+          egg: "hsl(var(--soul-egg))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -65,20 +82,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
