@@ -1,7 +1,8 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { soulPetsContract, type PetState, type ChatResult, type EvolutionResult, type SoulInteraction } from "@/lib/contracts/SoulPets";
 import { useWallet } from "@/lib/genlayer/WalletProvider";
 import { useToast } from "@/hooks/use-toast";
+import { rememberPetId } from "@/lib/soulpets/discovery";
 
 export function useSoulPets() {
   const { address } = useWallet();
@@ -19,12 +20,22 @@ export function useSoulPets() {
 
   const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const clearPoll = useCallback(() => {
+    if (pollRef.current) {
+      clearTimeout(pollRef.current);
+      pollRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => clearPoll, [clearPoll]);
+
   const loadPetState = useCallback(async (tokenId: string) => {
     try {
       setIsLoading(true);
       const state = await soulPetsContract.getPetState(tokenId);
       setPetState(state);
       setCurrentTokenId(tokenId);
+       rememberPetId(tokenId);
       return state;
     } catch (err: any) {
       console.error("Failed to load pet state:", err);
@@ -68,6 +79,7 @@ export function useSoulPets() {
   }, [address, loadPetState, toast]);
 
   const pollForUpdate = useCallback(async (tokenId: string, prevInteractionCount: number) => {
+    clearPoll();
     let attempts = 0;
     const maxAttempts = 20;
 
@@ -92,7 +104,7 @@ export function useSoulPets() {
       }
     };
     check();
-  }, [loadHistory, toast]);
+  }, [clearPoll, loadHistory, toast]);
 
   const chatWithPet = useCallback(async (tokenId: string, message: string) => {
     if (!address) {

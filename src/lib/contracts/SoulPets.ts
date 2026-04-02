@@ -1,4 +1,5 @@
 import { createGenLayerClient } from "../genlayer/client";
+import { toChatResult, toEvolutionResult, toPetState, toSoulInteraction } from "./soulPetsParsers";
 
 const CONTRACT_ADDRESS = "0xBBf8da5b9Baf1720d7181E74481a56A95100846b";
 
@@ -35,6 +36,8 @@ export interface EvolutionResult {
   form: string;
   narrative: string;
   visual_dna: string;
+  color?: string;
+  aura?: string;
 }
 
 export interface SoulInteraction {
@@ -97,15 +100,15 @@ class SoulPetsContract {
     });
     const result = (receipt as any)?.result;
     if (result && typeof result === "object") {
-      return result as ChatResult;
+      return toChatResult(result);
     }
-    return {
+    return toChatResult({
       response: "...",
       mood: "calm",
       visual_update: "none",
       evolution_points: 0,
       interaction_count: 0,
-    };
+    });
   }
 
   async evolve(address: string, tokenId: string): Promise<EvolutionResult> {
@@ -124,9 +127,9 @@ class SoulPetsContract {
     });
     const result = (receipt as any)?.result;
     if (result && typeof result === "object") {
-      return result as EvolutionResult;
+      return toEvolutionResult(result);
     }
-    return { new_stage: "", form: "", narrative: "", visual_dna: "" };
+    return toEvolutionResult({ new_stage: "", form: "", narrative: "", visual_dna: "" });
   }
 
   async getPetState(tokenId: string): Promise<PetState> {
@@ -137,15 +140,7 @@ class SoulPetsContract {
       args: [tokenId],
     });
 
-    // Handle Map responses from GenLayer
-    if (result instanceof Map) {
-      const obj = Object.fromEntries(result);
-      const traits = obj.traits instanceof Map ? Object.fromEntries(obj.traits) : obj.traits;
-      const visual_dna = obj.visual_dna instanceof Map ? Object.fromEntries(obj.visual_dna) : obj.visual_dna;
-      return { ...obj, traits, visual_dna } as PetState;
-    }
-
-    return result as PetState;
+    return toPetState(result);
   }
 
   async getSoulHistory(tokenId: string): Promise<SoulInteraction[]> {
@@ -157,12 +152,7 @@ class SoulPetsContract {
     });
 
     if (Array.isArray(result)) {
-      return result.map((item: any) => {
-        if (item instanceof Map) {
-          return Object.fromEntries(item) as SoulInteraction;
-        }
-        return item as SoulInteraction;
-      });
+      return result.map((item: any) => toSoulInteraction(item));
     }
 
     return [];
