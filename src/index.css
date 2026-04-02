@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
@@ -141,6 +141,18 @@
     100% { transform: scale(2); opacity: 0; }
   }
 
+  @keyframes soul-ring {
+    0% { transform: translate(-50%, -50%) scale(0.72); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.08); opacity: 0; }
+  }
+
+  @keyframes soul-spark {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+    35% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+  }
+
   @keyframes sparkle {
     0%, 100% { opacity: 0; transform: scale(0); }
     50% { opacity: 1; transform: scale(1); }
@@ -167,7 +179,32 @@
     animation: evolution-burst 1.5s ease-out forwards;
   }
 
+  .animate-soul-ring {
+    animation: soul-ring 1.8s ease-out infinite;
+  }
+
+  .animate-soul-ring-delayed {
+    animation: soul-ring 1.8s ease-out 0.45s infinite;
+  }
+
+  .animate-soul-spark {
+    animation: soul-spark 1.2s ease-out infinite;
+  }
+
   .trait-bar-fill {
     transition: width 1s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-egg-float,
+    .animate-egg-glow,
+    .animate-pulse-soft,
+    .animate-shimmer,
+    .animate-evolution-burst,
+    .animate-soul-ring,
+    .animate-soul-ring-delayed,
+    .animate-soul-spark {
+      animation: none;
+    }
   }
 }
